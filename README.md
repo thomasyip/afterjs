@@ -42,7 +42,7 @@ require(['after-singleton'], function(after) {
 ```
 
 ### Test
-__afterjs__ is unit tested with `Evidence.js`. You can also run all tests in commaond line:
+__afterjs__ is unit tested with `Evidence.js`. You can also run all tests on command line:
 
 ```bash
 phantomjs lib/test/runner.coffee
