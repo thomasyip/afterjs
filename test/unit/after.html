@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../lib/test/test.css">
+  <title>Afterjs Test</title>
+  <script src="../../lib/test/evidence.js"></script>
+  <script src="../../lib/test/evidence_runner.js"></script>
+  <script src="../../lib/underscore.js"></script>
+  <script src="../../after.js"></script>
+  <style>
+    #test {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100px;
+      height: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Touch tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <script>
+  (function(){
+    Evidence('BaiscTest', {
+      setUp: function(){
+      },
+
+      tearDown: function(){
+      },
+
+      testInitNone: function(t) {
+        try {
+          var instance = After.create();
+          t.assert(instance !== undefined && instance !== null);
+        } catch (e) {
+          console.error(e);
+          t.fail('Init failed');
+        }
+      },
+    })
+  })()
+  </script>
+</body>
+</html>
