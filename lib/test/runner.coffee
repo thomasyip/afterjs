@@ -14,7 +14,7 @@ if system.args.length > 1
   suites = system.args.slice(1)
 else
   # by default, run all test/unit/*.html pages
-  modules = 'after'.split /\s+/
+  modules = 'after after-with-requirejs'.split /\s+/
   suites = modules.map (name)-> "test/unit/#{name}.html"
 
 page = require('webpage').create()

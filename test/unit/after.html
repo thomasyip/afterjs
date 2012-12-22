@@ -28,21 +28,175 @@
   <script>
   (function(){
     Evidence('BaiscTest', {
-      setUp: function(){
-      },
-
-      tearDown: function(){
-      },
-
-      testInitNone: function(t) {
+      setUp: function(t){
         try {
-          var instance = After.create();
-          t.assert(instance !== undefined && instance !== null);
+          window.instance = after();
         } catch (e) {
           console.error(e);
-          t.fail('Init failed');
+          throw e;
         }
       },
+      tearDown: function(){
+        delete window.instance;
+      },
+      testInit: function(t) {
+        t.assert(instance !== undefined && instance !== null);
+      },
+      testSimple: function(t) {
+        var instance = after();
+        var called = 0;
+
+
+        instance.happen('dom-ready');
+        t.pause();
+        setTimeout(function() {
+          t.resume(function() {
+            t.assertEqual(0, called);
+            
+            instance.after(['dom-ready'], function() {
+              called++;
+            });
+            t.pause();
+            setTimeout(function() {
+              t.resume(function() {
+                t.assertEqual(1, called);
+              });
+            }, 10);
+          });
+        }, 10);
+      },
+      testSimpleNegative: function(t) {
+        var instance = after();
+        var called = 0;
+
+
+        instance.happen('something');
+        t.pause();
+        setTimeout(function() {
+          t.resume(function() {
+            t.assertEqual(0, called);
+            
+            instance.after(['dom-ready'], function() {
+              called++;
+            });
+            t.pause();
+            setTimeout(function() {
+              t.resume(function() {
+                t.assertEqual(0, called);
+              });
+            }, 10);
+          });
+        }, 10);
+      },
+      testSimpleListenerFirst: function(t) {
+        var instance = after();
+        var called = 0;
+
+
+        instance.after(['dom-ready'], function() {
+          called++;
+        });
+        t.pause();
+        setTimeout(function() {
+          t.resume(function() {
+            t.assertEqual(0, called);
+            
+            instance.happen('something');
+            t.pause();
+            setTimeout(function() {
+              t.resume(function() {
+                t.assertEqual(0, called);
+
+                instance.happen('dom-ready');
+                t.pause();
+                setTimeout(function() {
+                  t.resume(function() {
+                    t.assertEqual(1, called);
+                  });
+                }, 10);
+              });
+            }, 10);
+          });
+        }, 10);
+      },
+      testTwoEvents: function(t) {
+        var instance = after();
+        var called = 0;
+
+
+        instance.happen('dom-ready');
+        t.pause();
+        setTimeout(function() {
+          t.resume(function() {
+            t.assertEqual(0, called);
+            
+            instance.after(['dom-ready', 'dep1-initialized'], function() {
+              called++;
+            });
+            t.pause();
+            setTimeout(function() {
+              t.resume(function() {
+                t.assertEqual(0, called);
+                
+                instance.happen('dep2-initialized');
+                t.pause();
+                setTimeout(function() {
+                  t.resume(function() {
+                    t.assertEqual(0, called);
+                    
+                    instance.happen('dep1-initialized');
+                    t.pause();
+                    setTimeout(function() {
+                      t.resume(function() {
+                        t.assertEqual(1, called);
+                      });
+                    }, 10);
+                  });
+                }, 10);
+              });
+            }, 10);
+          });
+        }, 10);
+      }, /* testTwoEvents */
+      testTwoEventsNegative: function(t) {
+        var instance = after();
+        var called = 0;
+
+        instance.after(['dom-ready', 'dep1-initialized'], function() {
+          called++;
+        });
+
+        t.pause();
+        setTimeout(function() {
+          t.resume(function() {
+            t.assertEqual(0, called);
+            
+            instance.happen('dom-ready');
+            t.pause();
+            setTimeout(function() {
+              t.resume(function() {
+                t.assertEqual(0, called);
+                
+                instance.happen('something');
+                t.pause();
+                setTimeout(function() {
+                  t.resume(function() {
+                    t.assertEqual(0, called);
+                    
+                    instance.happen('something else');
+                    t.pause();
+                    setTimeout(function() {
+                      t.resume(function() {
+                        t.assertEqual(0, called);
+                      })
+                    });
+                  })
+                });
+              })
+            });
+          });
+        });
+      }, /* testTwoEventsNegative */
     })
   })()
   </script>

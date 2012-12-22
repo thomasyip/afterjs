@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../lib/test/test.css">
+  <title>Afterjs Test w/ Requirejs</title>
+  <script src="../../lib/test/evidence.js"></script>
+  <script src="../../lib/test/evidence_runner.js"></script>
+  <script src="../../lib/require.js"></script>
+  <script src="../../after.js"></script>
+  <style>
+    #test {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100px;
+      height: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Touch tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <script>
+  (function(){
+    requirejs.config({
+      paths: {
+        'underscore': '../../lib/underscore'
+      },
+    });
+
+    Evidence('BaiscTest', {
+      setUp: function(t){
+        instance = null;
+
+        require(['after-singleton'], function(singleton) {
+          instance = singleton;
+          instance.reset();
+        });
+      },
+      tearDown: function(t){
+        delete instance;
+      },
+      testInit: function(t) {
+        t.pause();
+        setTimeout(function() {
+          t.resume(function() {
+            t.assert(instance !== undefined && instance !== null);
+          })
+        }, 200);
+      },
+      testSimple: function(t) {
+        var called = 0;
+
+        t.pause();
+        setTimeout(function() {
+          t.resume(function() {
+            instance.happen('dom-ready');
+            t.pause();
+            setTimeout(function() {
+              t.resume(function() {
+                t.assertEqual(0, called);
+                
+                instance.after(['dom-ready'], function() {
+                  called++;
+                });
+                t.pause();
+                setTimeout(function() {
+                  t.resume(function() {
+                    t.assertEqual(1, called);
+                  });
+                }, 10);
+              });
+            }, 10);
+          })
+        }, 10);
+      },
+      testSimpleNegative: function(t) {
+        var called = 0;
+
+        t.pause();
+        setTimeout(function() {
+          t.resume(function() {
+            instance.happen('something');
+
+            t.pause();
+            setTimeout(function() {
+              t.resume(function() {
+                t.assertEqual(0, called);
+                
+                instance.after(['dom-ready'], function() {
+                  called++;
+                });
+                t.pause();
+                setTimeout(function() {
+                  t.resume(function() {
+                    t.assertEqual(0, called);
+                  });
+                }, 10);
+              });
+            }, 10);
+          })
+        }, 10);
+      },
+    })
+  })()
+  </script>
+</body>
+</html>
