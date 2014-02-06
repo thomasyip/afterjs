@@ -1,6 +1,6 @@
 [submodule "submodules/requirejs"]
 	path = submodules/requirejs
-	url = https://github.com/jrburke/requirejs.git
+	url = git://github.com/beedesk/requirejs.git 
 [submodule "submodules/underscore"]
 	path = submodules/underscore
-	url = https://github.com/documentcloud/underscore.git
+	url = git://github.com/beedesk/underscore.git 
