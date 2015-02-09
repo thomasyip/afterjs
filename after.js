@@ -86,14 +86,8 @@
     }
 
     if (typeof define === 'function' && define.amd) {
-        // handle requirejs
-        define('after', ['underscore'], function(underscore) {
-            return function() {
-              return main(_);
-            };
-        });
-        define('after-singleton', ['after'], function(after) {
-            return after();
+        define(['underscore'], function(us) {
+            return main(us);
         });
     } else {
         window.after = function() {
